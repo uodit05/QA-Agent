@@ -49,11 +49,6 @@ An intelligent agent that constructs a "testing brain" from project documentatio
    pip install -r requirements.txt
    ```
 
-4. Start Ollama (in a separate terminal):
-   ```bash
-   ollama run llama3
-   ```
-
 ## How to Run
 
 1. **Start the Backend Server**:
@@ -85,6 +80,10 @@ An intelligent agent that constructs a "testing brain" from project documentatio
 2. Select a generated test case from the dropdown.
 3. Click **Generate Script**.
 4. Copy the generated Python code and run it to verify the test.
+
+## Extra Feature
+Added a chatbot to ask questions on the project knowledge base to easily query required information for testing instead of manually going through the whole code base.
+
 
 ## Support Documents Explained
 - **checkout.html**: The target e-commerce page we are testing.
