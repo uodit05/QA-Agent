@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+streamlit
+chromadb
+langchain
+langchain-community
+langchain-huggingface
+beautifulsoup4
+pymupdf
+unstructured
+requests
+python-multipart
+sentence-transformers
+selenium
+google-generativeai
+python-dotenv

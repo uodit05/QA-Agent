@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Shop Checkout</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { display: flex; gap: 20px; }
+        .form-section { flex: 2; }
+        .cart-section { flex: 1; background: #f9f9f9; padding: 20px; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="email"], select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .error { color: red; font-size: 0.8em; display: none; }
+        .btn { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
+        .btn:hover { background: #218838; }
+        .item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .total { font-weight: bold; font-size: 1.2em; margin-top: 20px; border-top: 2px solid #ddd; padding-top: 10px; }
+        .success-message { display: none; color: green; text-align: center; margin-top: 20px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <h1>Checkout</h1>
+    <div class="container">
+        <div class="form-section">
+            <h2>Shipping Details</h2>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                    <span class="error" id="fullNameError">Name is required</span>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    <span class="error" id="emailError">Please enter a valid email</span>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" required>
+                    <span class="error" id="addressError">Address is required</span>
+                </div>
+
+                <h3>Shipping Method</h3>
+                <div class="form-group">
+                    <label><input type="radio" name="shipping" value="standard" checked> Standard (Free)</label>
+                    <label><input type="radio" name="shipping" value="express"> Express ($10)</label>
+                </div>
+
+                <h3>Payment Method</h3>
+                <div class="form-group">
+                    <label><input type="radio" name="payment" value="credit_card" checked> Credit Card</label>
+                    <label><input type="radio" name="payment" value="paypal"> PayPal</label>
+                </div>
+
+                <button type="submit" class="btn" id="payBtn">Pay Now</button>
+            </form>
+        </div>
+        <div class="cart-section">
+            <h2>Order Summary</h2>
+            <div id="cartItems">
+                <div class="item">
+                    <span>Wireless Headphones</span>
+                    <span>$99.00</span>
+                </div>
+                <div class="item">
+                    <span>Phone Case</span>
+                    <span>$25.00</span>
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="discountCode">Discount Code</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="discountCode" placeholder="Enter code">
+                    <button type="button" id="applyDiscount" style="width: auto; padding: 8px;">Apply</button>
+                </div>
+                <span id="discountMessage" style="font-size: 0.9em;"></span>
+            </div>
+
+            <div class="total">
+                Total: $<span id="totalAmount">124.00</span>
+            </div>
+        </div>
+    </div>
+    <div id="successMessage" class="success-message">Payment Successful!</div>
+
+    <script>
+        const baseTotal = 124.00;
+        let shippingCost = 0;
+        let discount = 0;
+
+        // Shipping logic
+        document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                shippingCost = e.target.value === 'express' ? 10 : 0;
+                updateTotal();
+            });
+        });
+
+        // Discount logic
+        document.getElementById('applyDiscount').addEventListener('click', () => {
+            const code = document.getElementById('discountCode').value.trim().toUpperCase();
+            const msg = document.getElementById('discountMessage');
+            
+            if (code === 'SAVE15') {
+                discount = 0.15;
+                msg.textContent = '15% discount applied!';
+                msg.style.color = 'green';
+            } else if (code === '') {
+                discount = 0;
+                msg.textContent = '';
+            } else {
+                discount = 0;
+                msg.textContent = 'Invalid code';
+                msg.style.color = 'red';
+            }
+            updateTotal();
+        });
+
+        function updateTotal() {
+            const subtotal = baseTotal;
+            const discountedSubtotal = subtotal * (1 - discount);
+            const finalTotal = discountedSubtotal + shippingCost;
+            document.getElementById('totalAmount').textContent = finalTotal.toFixed(2);
+        }
+
+        // Form validation
+        document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            let isValid = true;
+            
+            // Simple validation
+            const required = ['fullName', 'email', 'address'];
+            required.forEach(id => {
+                const el = document.getElementById(id);
+                const error = document.getElementById(id + 'Error');
+                if (!el.value.trim()) {
+                    error.style.display = 'block';
+                    isValid = false;
+                } else {
+                    error.style.display = 'none';
+                }
+            });
+
+            const email = document.getElementById('email');
+            if (email.value && !email.value.includes('@')) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                document.getElementById('checkoutForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

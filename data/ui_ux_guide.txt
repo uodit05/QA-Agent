@@ -1,0 +1,16 @@
+# UI/UX Guidelines
+
+## Color Palette
+- **Primary Button (Pay Now)**: Green (#28a745). Hover: Darker Green (#218838).
+- **Error Text**: Red.
+- **Success Text**: Green.
+- **Background**: White (#ffffff) for main content, Light Gray (#f9f9f9) for cart summary.
+
+## Typography
+- Font Family: Arial, sans-serif.
+- Headings: Bold, clear hierarchy.
+
+## Interactions
+- **Hover Effects**: Buttons should darken on hover.
+- **Feedback**: Immediate visual feedback for discount codes and shipping selection.
+- **Validation**: Error messages should appear immediately below the invalid field.

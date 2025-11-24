@@ -1,0 +1,27 @@
+{
+    "POST /api/validate-discount": {
+        "description": "Validates a discount code",
+        "parameters": {
+            "code": "string"
+        },
+        "responses": {
+            "200": { "valid": true, "discount_percent": 15 },
+            "400": { "valid": false, "message": "Invalid code" }
+        }
+    },
+    "POST /api/submit-order": {
+        "description": "Submits the final order",
+        "parameters": {
+            "fullName": "string",
+            "email": "string",
+            "address": "string",
+            "shipping": "string",
+            "payment": "string",
+            "total": "number"
+        },
+        "responses": {
+            "200": { "success": true, "orderId": "12345" },
+            "400": { "success": false, "errors": ["string"] }
+        }
+    }
+}
