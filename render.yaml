@@ -2,6 +2,7 @@ services:
   # Backend Service (FastAPI)
   - type: web
     name: qa-agent-backend
+    runtime: python
     env: python
     region: oregon
     plan: free
@@ -10,12 +11,11 @@ services:
     envVars:
       - key: GEMINI_API_KEY
         sync: false
-      - key: PYTHON_VERSION
-        value: 3.11.0
 
   # Frontend Service (Streamlit)
   - type: web
     name: qa-agent-frontend
+    runtime: python
     env: python
     region: oregon
     plan: free
@@ -27,5 +27,3 @@ services:
           type: web
           name: qa-agent-backend
           envVarKey: RENDER_EXTERNAL_URL
-      - key: PYTHON_VERSION
-        value: 3.11.0
