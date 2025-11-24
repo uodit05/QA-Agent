@@ -37,7 +37,7 @@ An intelligent, autonomous QA agent that generates comprehensive test cases and 
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/uodit05/QA-Agent.git
 cd QA-Agent
 ```
 
