@@ -1,92 +1,179 @@
-# Autonomous QA Agent
+# Autonomous QA Agent 🤖
 
-An intelligent agent that constructs a "testing brain" from project documentation to generate test cases and Selenium scripts automatically.
+An intelligent, autonomous QA agent that generates comprehensive test cases and Selenium test scripts from project documentation and HTML structure using Google's Gemini API and RAG (Retrieval-Augmented Generation).
 
 ## Features
-- **Knowledge Base Ingestion**: Uploads and parses PDF, Markdown, TXT, JSON, and HTML files.
-- **RAG Pipeline**: Uses ChromaDB and HuggingFace embeddings to retrieve relevant context.
-- **Test Case Generation**: Generates structured test plans based strictly on provided documentation (no hallucinations).
-- **Selenium Script Generation**: Creates executable Python Selenium scripts grounded in the target HTML structure.
-- **Modern UI**: Built with Streamlit for easy interaction.
+
+- 📚 **Knowledge Base Ingestion**: Upload project documents (PDF, Markdown, HTML, JSON, TXT)
+- 🧪 **Smart Test Case Generation**: AI-powered test case creation grounded in your documentation
+- 🐍 **Selenium Script Generation**: Automatic Python/Selenium script generation from test cases
+- 💬 **Chat with Docs**: Interactive Q&A with your knowledge base
+- 🎨 **Modern UI**: Beautiful, responsive Streamlit interface
+- 🚀 **Cloud-Ready**: Deploy to Render with one click
+
+## Architecture
+
+```
+┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
+│   Streamlit     │────────>│   FastAPI       │────────>│  Gemini API     │
+│   Frontend      │         │   Backend       │         │  (LLM)          │
+└─────────────────┘         └─────────────────┘         └─────────────────┘
+                                    │
+                                    v
+                            ┌─────────────────┐
+                            │   ChromaDB      │
+                            │ Vector Store    │
+                            └─────────────────┘
+```
+
+## Prerequisites
+
+- Python 3.11+
+- Google Gemini API key ([Get one here](https://makersuite.google.com/app/apikey))
+- Git
+
+## Quick Start (Local)
+
+### 1. Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd QA-Agent
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configure API Key
+
+Create `src/.env` file:
+
+```bash
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### 4. Run the Application
+
+**Terminal 1 - Backend:**
+```bash
+uvicorn src.backend:app --host 0.0.0.0 --port 10000
+```
+
+**Terminal 2 - Frontend:**
+```bash
+BACKEND_URL=http://localhost:10000 streamlit run src/app.py --server.port 8501
+```
+
+### 5. Access the App
+
+Open your browser and navigate to:
+```
+http://localhost:8501
+```
+
+## Usage
+
+### 1. Build Knowledge Base
+- Upload your project documents (specs, requirements, API docs, etc.)
+- Click "🚀 Build Knowledge Base"
+- Wait for ingestion to complete
+
+### 2. Generate Test Cases
+- Describe what you want to test (e.g., "Generate test cases for login functionality")
+- Click "✨ Generate Tests"
+- Review the generated test cases
+
+### 3. Generate Selenium Scripts
+- Expand a test case
+- Provide the target HTML context
+- Click "🔧 Generate Script"
+- Download and run the script
+
+### 4. Chat with Docs
+- Switch to "💬 Chat Assistant" tab
+- Ask questions about your documentation
+- Get AI-powered answers grounded in your knowledge base
+
+## Deployment to Render
+
+This application is ready for deployment to Render with automatic configuration.
+
+### Quick Deploy
+
+1. **Push to Git**:
+   ```bash
+   git add .
+   git commit -m "Deploy to Render"
+   git push origin main
+   ```
+
+2. **Deploy on Render**:
+   - Go to [Render Dashboard](https://dashboard.render.com/)
+   - Click **"New +"** → **"Blueprint"**
+   - Connect your Git repository
+   - Render will auto-detect `render.yaml`
+   - Set `GEMINI_API_KEY` in backend environment variables
+   - Click **"Apply"**
+
+3. **Access Your App**:
+   - Frontend URL: `https://qa-agent-frontend.onrender.com`
+   - Backend URL: `https://qa-agent-backend.onrender.com`
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Project Structure
+
 ```
-.
-├── checkout.html           # Target web project for testing
-├── data/                   # Support documents (specs, guides, API)
+QA-Agent/
+├── src/
+│   ├── app.py              # Streamlit frontend
+│   ├── backend.py          # FastAPI backend
+│   ├── utils.py            # Utility functions
+│   └── .env                # Environment variables (not in git)
+├── data/                   # Sample documents
 │   ├── product_specs.md
 │   ├── ui_ux_guide.txt
 │   └── api_endpoints.json
-├── src/
-│   ├── app.py              # Streamlit Frontend
-│   ├── backend.py          # FastAPI Backend
-│   └── utils.py            # Document parsing & chunking utilities
+├── chroma_db/              # Vector database (auto-created)
 ├── requirements.txt        # Python dependencies
+├── render.yaml             # Render deployment config
+├── DEPLOYMENT.md           # Deployment guide
 └── README.md               # This file
 ```
 
-## Setup Instructions
+## Technologies Used
 
-### Prerequisites
-- Python 3.10+
-- [Ollama](https://ollama.com/) (for local LLM)
+- **Frontend**: Streamlit
+- **Backend**: FastAPI
+- **LLM**: Google Gemini API (`gemini-flash-latest`)
+- **Vector DB**: ChromaDB
+- **Embeddings**: HuggingFace (`all-MiniLM-L6-v2`)
+- **RAG Framework**: LangChain
+- **Document Parsing**: PyMuPDF, BeautifulSoup4
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone <repo-url>
-   cd QA-Agent
-   ```
+## Environment Variables
 
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `GEMINI_API_KEY` | Google Gemini API key | Yes | - |
+| `BACKEND_URL` | Backend service URL | No | `http://localhost:10000` |
+| `PORT` | Service port (Render) | No | `8000` (backend), `8501` (frontend) |
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Troubleshooting
 
-## How to Run
+### "LLM was not reachable"
+- Verify `GEMINI_API_KEY` is set in `src/.env`
+- Check your API key is valid
+- Ensure you have internet connectivity
 
-1. **Start the Backend Server**:
-   ```bash
-   uvicorn src.backend:app --host 0.0.0.0 --port 8000
-   ```
+### "Could not connect to backend"
+- Verify backend is running on the correct port
+- Check `BACKEND_URL` is set correctly
+- Look for errors in backend terminal
 
-2. **Start the Frontend UI** (in a new terminal):
-   ```bash
-   streamlit run src/app.py
-   ```
-
-3. Open your browser at `http://localhost:8501`.
-
-## Usage Guide
-
-### Phase 1: Build Knowledge Base
-1. Go to the **Knowledge Base** tab.
-2. Upload `checkout.html` and all files from the `data/` directory.
-3. Click **Build Knowledge Base**. Wait for the success message.
-
-### Phase 2: Generate Test Cases
-1. Go to the **Test Case Agent** tab.
-2. Enter a query (e.g., "Generate test cases for the discount code feature").
-3. Click **Generate Test Cases**. The agent will display structured test scenarios grounded in the uploaded docs.
-
-### Phase 3: Generate Selenium Script
-1. Go to the **Script Generator** tab.
-2. Select a generated test case from the dropdown.
-3. Click **Generate Script**.
-4. Copy the generated Python code and run it to verify the test.
-
-## Extra Feature
-Added a chatbot to ask questions on the project knowledge base to easily query required information for testing instead of manually going through the whole code base.
-
-
-## Support Documents Explained
-- **checkout.html**: The target e-commerce page we are testing.
-- **product_specs.md**: Defines business rules (e.g., "SAVE15 gives 15% off").
-- **ui_ux_guide.txt**: Defines visual requirements (e.g., "Error messages must be red").
-- **api_endpoints.json**: Defines the expected backend API behavior.
+### ChromaDB Errors
+- Delete `chroma_db/` directory and rebuild knowledge base
+- Ensure you have write permissions in the project directory
